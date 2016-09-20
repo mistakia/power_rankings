@@ -37,6 +37,7 @@ async.parallel({
     team.oberon = team.oberon / 10
 
     team.season = pff.calculate(team.players, results.pff);
+
   })
 
   var ob_max = _.max(_.map(data.teams, 'oberon'))
@@ -49,6 +50,46 @@ async.parallel({
     team.ob_normalized = (team.oberon - ob_min) / (ob_max - ob_min)
     team.pff_normalized = (team.season.season_total - pff_min) / (pff_max - pff_min)
     team.power_ranking = team.ob_normalized + (1.45 * team.pff_normalized)
+
+    team.schedule.forEach(function(m, i) {
+      var op = _.find(data.teams, ['id', parseInt(m.opponent, 10)])
+      m.opponent_name = op.name
+
+      if (op.schedule[i].score)
+	m.opponent_score = op.schedule[i].score
+      else
+	m.opponent_projected_score = (op.season.weeks[(i+1)].total_points).toFixed(1)
+
+      if (!m.score)
+	m.projected_score = (team.season.weeks[(i+1)].total_points).toFixed(1)
+
+      if (m.score) {
+	if (m.opponent_score < m.score) {
+	  m.result = 'Win'
+	} else if (m.opponent_score > m.score) {
+	  m.result = 'Loss'
+	} else {
+	  m.result = 'Tie'
+	}
+      } else {
+	if (m.opponent_projected_score < m.projected_score) {
+	  m.result = 'Win'
+	  team.record.projected_wins++
+	} else if (m.opponent_projected_score > m.projected_score) {
+	  m.result = 'Loss'
+	  team.record.projected_losses++
+	} else {
+	  m.result = 'Tie'
+	  team.record.projected_ties++
+	}
+      }
+    });
+
+    var r = team.record
+
+    team.record.projected_display = (r.wins + r.projected_wins) + '-'
+    team.record.projected_display += (r.losses + r.projected_losses) + '-'
+    team.record.projected_display += (r.ties + r.projected_ties)
   });
 
   var rankings = _.orderBy(data.teams, 'power_ranking', 'desc');
@@ -56,11 +97,6 @@ async.parallel({
     return _.pick(r, ['id', 'name', 'power_ranking', 'oberon'])
   })
   data.power_rankings[data.current_week] = rankings
-
-  data.teams.forEach(function(team) {
-    var idx = _.findIndex(data.power_rankings[data.current_week], { 'id': team.id })
-    team.power_rankings_rank = idx + 1
-  })
 
   var pff_rankings = _.orderBy(results.teams, 'pff_normalized', 'desc')
 

@@ -5,4 +5,5 @@ tmp
 config/deploy
 config/aws_creds.rb
 data.json
+data-backup.json
 index.html

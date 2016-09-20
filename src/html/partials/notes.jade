@@ -15,27 +15,39 @@
     a.schedule(onclick='View.active("schedule")') Schedule
 
 .menu-body.about.active
+    {{ for(var week in it.power_rankings) { }}
+    {{~ it.power_rankings[week] :team:index}}
+    {{? team.id === it.current_team.id}}
     .meta
-        strong Week {{= it.current_week }} Rank:
-        span {{= it.current_team.power_rankings_rank }}
+        strong Week {{= week }} Rank:
+        span {{= index+1 }}
+    {{?}}
+    {{~}}
+    {{ } }}
     .meta
         strong Record:
         span {{= it.current_team.record.display }}
     .meta
         strong Projected Record:
-        span coming soon
+        span {{= it.current_team.record.projected_display }}
     .meta
         strong Points Scored:
         span {{= it.current_team.total_points }}
     .meta
         strong Points Scored (avg):
-        span {{= it.current_team.high_score }}
+        span {{= it.current_team.avg_score }}
     .meta
         strong Points High:
         span {{= it.current_team.high_score }}
     .meta
         strong Points Low:
         span {{= it.current_team.low_score }}
+    .meta
+        strong Projected Points (total):
+        span {{= it.current_team.season.season_total }}
+    .meta
+        strong Projected Points (avg):
+        span {{= Math.floor((it.current_team.total_points + it.current_team.season.season_total) / 13) }}
 
 .menu-body.roster
     table
@@ -45,15 +57,31 @@
                 th Name
                 th Pts
                 th Avg
+                th Last
         tbody
             {{~it.current_team.players :player:index}}
             tr
                 td {{=player.prk}}
                 td.player
-                    span.player-name {{=player.name}}
+                    span.bold {{=player.name}}
                     span.player-position {{=player.position}}
                 td {{=player.pts}}
                 td {{=player.avg}}
+                td {{=player.last}}
             {{~}}
 .menu-body.schedule
-    .meta coming soon
+    table
+        thead
+            tr
+                th Week
+                th Opponent
+                th Score
+                th Result
+        tbody
+            {{~it.current_team.schedule :game:index}}
+            tr
+                td {{= index + 1}}
+                td.bold {{= game.opponent_name }}
+                td {{= (game.score || game.projected_score) }} - {{= (game.opponent_score || game.opponent_projected_score) }}
+                td {{= game.result }}
+            {{~}}
