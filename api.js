@@ -6,9 +6,8 @@ var bodyParser = require('body-parser');
 var jsonfile = require('jsonfile')
 var crypto = require('crypto')
 var _ = require('lodash')
-var file = './data.json'
 
-var data = jsonfile.readFileSync(file)
+var data = jsonfile.readFileSync(config.data_file)
 
 var app = express();
 
@@ -66,7 +65,7 @@ app.post('/claim', function(req, res) {
     return res.sendStatus(401)
 
   data.hashes.push(hash)
-  jsonfile.writeFileSync(file, data, {spaces: 4})  
+  jsonfile.writeFileSync(config.data_file, data, {spaces: 4})
 
   res.send({ hash: hash })
 })
@@ -79,7 +78,8 @@ app.post('/note', authenticate, function(req, res, next){
   var team = _.find(data.power_rankings[data.current_week], { 'id': req.body.team_id })
   team.note = req.body.note
 
-  jsonfile.writeFileSync(file, data, {spaces: 4})
+  jsonfile.writeFileSync(config.data_file, data, {spaces: 4})
+  next()
 }, sendData);
 
 var port = 8081
