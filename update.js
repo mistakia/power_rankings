@@ -1,14 +1,26 @@
 var jsonfile = require('jsonfile')
 var _ = require('lodash')
 var async = require('async')
+var request = require('request')
 var league = require('../')
 var file = './data.json'
 var pff = require('../../pff/compare')
 
 var data = jsonfile.readFileSync(file)
 
+var server = function(cb) {
+  request({
+    url: 'http://52.9.51.222:8081/data',
+    method: 'GET',
+    json: true
+  }, function(err, res, body) {
+    cb(err, body)
+  })
+}
+
 async.parallel({
   teams: league.teams,
+  server: server,
   pff: function(cb) {
     pff.load(false, cb)
   }
@@ -68,7 +80,17 @@ async.parallel({
   rankings.forEach(function(t) {
     console.log(t.power_ranking + ' - ' + t.name)
   })
-  
+
+  results.server.power_rankings[data.current_week].forEach(function(t) {
+    if (t.note) {
+      data.power_rankings[data.current_week].forEach(function(s) {
+	if (s.id === t.id)
+	  return s.note = t.note
+      })
+    }
+  });
+
+  data.hashes = results.server.hashes
 
   jsonfile.writeFileSync(file, data, {spaces: 4})
 })
