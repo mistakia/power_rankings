@@ -1,0 +1,59 @@
+.header
+    h3 Week {{= it.current_week }} Assignment
+    h1 {{= it.current_team.name }}
+
+
+.body
+    form(onsubmit='return App.submit(event)')
+        textarea(onkeyup="View.textarea_resize(this)")
+        input(type='text', placeholder='passphrase')
+        input(type='submit', value='save')
+
+.menu
+    a.about.active(onclick='View.active("about")') About
+    a.roster(onclick='View.active("roster")') Roster
+    a.schedule(onclick='View.active("schedule")') Schedule
+
+.menu-body.about.active
+    .meta
+        strong Week {{= it.current_week }} Rank:
+        span {{= it.current_team.power_rankings_rank }}
+    .meta
+        strong Record:
+        span {{= it.current_team.record.display }}
+    .meta
+        strong Projected Record:
+        span coming soon
+    .meta
+        strong Points Scored:
+        span {{= it.current_team.total_points }}
+    .meta
+        strong Points Scored (avg):
+        span {{= it.current_team.high_score }}
+    .meta
+        strong Points High:
+        span {{= it.current_team.high_score }}
+    .meta
+        strong Points Low:
+        span {{= it.current_team.low_score }}
+
+.menu-body.roster
+    table
+        thead
+            tr
+                th PRK
+                th Name
+                th Pts
+                th Avg
+        tbody
+            {{~it.current_team.players :player:index}}
+            tr
+                td {{=player.prk}}
+                td.player
+                    span.player-name {{=player.name}}
+                    span.player-position {{=player.position}}
+                td {{=player.pts}}
+                td {{=player.avg}}
+            {{~}}
+.menu-body.schedule
+    .meta coming soon

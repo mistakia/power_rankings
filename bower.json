@@ -1,0 +1,22 @@
+{
+  "name": "power_rankings",
+  "description": "",
+  "main": "index.html",
+  "authors": [
+    "t3rr0r <mail@t3rr0r.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "doT": "^1.0.1",
+    "semantic": "semantic-ui#^2.2.4"
+  }
+}

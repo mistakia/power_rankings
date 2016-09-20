@@ -1,0 +1,44 @@
+@import '00_variables.styl'
+@import 'nib'
+
+.menu
+    max-width 550px
+    margin 0 auto
+    display flex
+    border-bottom 2px solid rgba(34,36,38,.15)
+    a
+        align-self flex-end
+        display flex
+        align-items center
+        vertical-align middle
+        flex 0 0 auto
+        margin 0 0 -2px
+        padding .85714286em 1.14285714em
+        border-bottom-width 2px
+        border-bottom-color transparent
+        border-bottom-style solid
+        &.active
+            border-color #1B1C1D
+            color rgba(0,0,0,.95)
+            font-weight 700
+
+.menu-body
+    max-width 550px
+    margin 15px auto
+    display none
+    table
+        margin 0 auto
+    &.active
+        display block
+
+
+table
+    .player
+        padding-left 20px
+        padding-right 20px
+    .player-name
+        font-weight bold
+    .player-position
+        font-size 10px
+        padding-left 5px
+        opacity .7

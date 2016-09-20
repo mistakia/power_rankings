@@ -1,0 +1,35 @@
+@import '00_variables.styl'
+@import 'nib'
+
+.header
+    text-align center
+    font-family Lato,'Helvetica Neue',Arial,Helvetica,sans-serif
+    h1
+        font-size 2em
+    h3
+        font-size 0.8rem
+        font-weight 300
+        margin-bottom 7px
+
+.body
+    form
+        max-width 550px
+        margin 45px auto
+    textarea
+        background white
+        resize none
+        overflow hidden
+    input
+        width auto
+        &[type="text"]
+            margin 15px 0
+            background white
+        &[type="submit"]
+            margin-left 20px
+            background #E0E1E2
+            border-radius 3px
+            font-weight bold
+
+.meta
+    strong
+        margin-right 5px

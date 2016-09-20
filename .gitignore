@@ -1,0 +1,8 @@
+*.DS_Store
+
+node_modules
+tmp
+config/deploy
+config/aws_creds.rb
+data.json
+index.html
