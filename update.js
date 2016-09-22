@@ -2,12 +2,14 @@ var jsonfile = require('jsonfile')
 var _ = require('lodash')
 var async = require('async')
 var request = require('request')
+var utils = require('./utils')
 var league = require('../')
 var file = './data.json'
 var pff = require('../../pff/compare')
 var kmeans = require('node-kmeans')
 
 var data = jsonfile.readFileSync(file)
+var current_week = utils.getWeek()
 
 var server = function(cb) {
   request({
@@ -116,7 +118,7 @@ async.parallel({
       });
     });
 
-    data.power_rankings[data.current_week] = rankings
+    data.power_rankings[current_week] = rankings
 
     var pff_rankings = _.orderBy(results.teams, 'pff_normalized', 'desc')
 
@@ -137,9 +139,9 @@ async.parallel({
       console.log(t.power_ranking + ' - ' + t.name)
     })
 
-    results.server.power_rankings[data.current_week].forEach(function(t) {
+    results.server.power_rankings[current_week].forEach(function(t) {
       if (t.note) {
-	data.power_rankings[data.current_week].forEach(function(s) {
+	data.power_rankings[current_week].forEach(function(s) {
 	  if (s.id === t.id)
 	    return s.note = t.note
 	})
