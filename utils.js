@@ -10,7 +10,7 @@ var should_lock = function() {
   if (day > 4)
     return true
 
-  if (day === 3 && now.hour() >= 19)
+  if (day === 4 && now.hour() >= 18)
     return true
 
   return false
