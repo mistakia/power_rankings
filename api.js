@@ -36,7 +36,6 @@ var getHash = function(s) {
 
 var authenticate = function(req, res, next) {
   var hash = getHash(req.query.secret || req.body.secret);
-
   var exists = data.hashes.indexOf(hash) >= 0
 
   if (exists)
@@ -77,8 +76,8 @@ app.get('/data', sendData)
 
 app.post('/note', authenticate, function(req, res, next){
   var note = req.body.note
-
-  var team = _.find(data.power_rankings[data.current_week], { 'id': req.body.team_id })
+  var current_week = utils.getWeek()
+  var team = _.find(data.power_rankings[current_week], { 'id': req.body.team_id })
   team.note = req.body.note
 
   jsonfile.writeFileSync(config.data_file, data, {spaces: 4})
