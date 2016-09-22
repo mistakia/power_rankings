@@ -29,6 +29,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-inline": "^0.3.6",
     "grunt-inline-angular-templates": "^0.1.5",
-    "grunt-static-inline": "^0.1.9"
+    "grunt-static-inline": "^0.1.9",
+    "node-kmeans": "^1.1.0"
   }
 }

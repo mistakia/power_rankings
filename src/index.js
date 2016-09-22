@@ -18,7 +18,9 @@
 
       App.data.power_rankings[App.data.current_week].forEach(function(t) {
 	if (t.note && t.id === App.data.current_team.id) {
-	  document.querySelector('textarea').value = t.note
+	  var ta = document.querySelector('textarea')
+	  ta.value = t.note
+	  View.textarea_resize(ta)
 	  return
 	}
       })

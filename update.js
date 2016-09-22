@@ -5,6 +5,7 @@ var request = require('request')
 var league = require('../')
 var file = './data.json'
 var pff = require('../../pff/compare')
+var kmeans = require('node-kmeans')
 
 var data = jsonfile.readFileSync(file)
 
@@ -58,10 +59,10 @@ async.parallel({
       if (op.schedule[i].score)
 	m.opponent_score = op.schedule[i].score
       else
-	m.opponent_projected_score = (op.season.weeks[(i+1)].total_points).toFixed(1)
+	m.opponent_projected_score = Math.round(op.season.weeks[(i+1)].total_points)
 
       if (!m.score)
-	m.projected_score = (team.season.weeks[(i+1)].total_points).toFixed(1)
+	m.projected_score = Math.round(team.season.weeks[(i+1)].total_points)
 
       if (m.score) {
 	if (m.opponent_score < m.score) {
@@ -94,39 +95,59 @@ async.parallel({
 
   var rankings = _.orderBy(data.teams, 'power_ranking', 'desc');
   rankings = _.map(rankings, function(r) {
-    return _.pick(r, ['id', 'name', 'power_ranking', 'oberon'])
+    var o = _.pick(r, ['id', 'name', 'power_ranking', 'oberon', 'total_points'])
+    o.projected = _.get(r, 'record.projected_display')
+    o.projected_points = _.get(r, 'season.season_total')
+    return o
   })
-  data.power_rankings[data.current_week] = rankings
+  var vectors = []
+  for (var i = 0 ; i < rankings.length ; i++) {
+    vectors[i] = [ rankings[i]['power_ranking'] ]
+  }
+  kmeans.clusterize(vectors, {k: 6}, function(err, res) {
+    if (err) console.error(err);
 
-  var pff_rankings = _.orderBy(results.teams, 'pff_normalized', 'desc')
+    var tiers = _.orderBy(res, 'centroid[0]', 'desc')
+    console.log(JSON.stringify(tiers, null, 2))
 
-  console.log('\n============ PFF Rankings  ============')
-  pff_rankings.forEach(function(t) {
-    console.log(t.pff_normalized + ' - ' + t.name)
-  })
+    tiers.forEach(function(tier, i) {
+      tier.clusterInd.forEach(function(c) {
+	rankings[c].tier = (i + 1)
+      });
+    });
 
-  var ob_rankings = _.orderBy(results.teams, 'ob_normalized', 'desc')
+    data.power_rankings[data.current_week] = rankings
 
-  console.log('\n============ Oberon Rankings  ============')
-  ob_rankings.forEach(function(t) {
-    console.log(t.ob_normalized + ' - ' + t.name)
-  })
+    var pff_rankings = _.orderBy(results.teams, 'pff_normalized', 'desc')
 
-  console.log('\n============ Overall Rankings  ============')
-  rankings.forEach(function(t) {
-    console.log(t.power_ranking + ' - ' + t.name)
-  })
+    console.log('\n============ PFF Rankings  ============')
+    pff_rankings.forEach(function(t) {
+      console.log(t.pff_normalized + ' - ' + t.name)
+    })
 
-  results.server.power_rankings[data.current_week].forEach(function(t) {
-    if (t.note) {
-      data.power_rankings[data.current_week].forEach(function(s) {
-	if (s.id === t.id)
-	  return s.note = t.note
-      })
-    }
+    var ob_rankings = _.orderBy(results.teams, 'ob_normalized', 'desc')
+
+    console.log('\n============ Oberon Rankings  ============')
+    ob_rankings.forEach(function(t) {
+      console.log(t.ob_normalized + ' - ' + t.name)
+    })
+
+    console.log('\n============ Overall Rankings  ============')
+    rankings.forEach(function(t) {
+      console.log(t.power_ranking + ' - ' + t.name)
+    })
+
+    results.server.power_rankings[data.current_week].forEach(function(t) {
+      if (t.note) {
+	data.power_rankings[data.current_week].forEach(function(s) {
+	  if (s.id === t.id)
+	    return s.note = t.note
+	})
+      }
+    });
+
+    data.hashes = results.server.hashes
+
+    jsonfile.writeFileSync(file, data, {spaces: 4})
   });
-
-  data.hashes = results.server.hashes
-
-  jsonfile.writeFileSync(file, data, {spaces: 4})
 })
