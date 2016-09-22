@@ -1,29 +1,42 @@
 (function() {
 
+  var show_rankings = function() {
+    View.render({
+      id: '/rankings.html',
+      data: App.data
+    })
+  }
+
+  var show_assignment = function() {
+    var idx = App.data.hashes.indexOf(App.hash)
+    idx = (idx + App.data.weeks[App.data.current_week].seed) % App.data.teams.length
+
+    App.data.current_team = App.data.teams[idx]
+
+    View.render({
+      id: '/notes.html',
+      data: App.data
+    })
+
+    App.data.power_rankings[App.data.current_week].forEach(function(t) {
+      if (t.note && t.id === App.data.current_team.id) {
+	var ta = document.querySelector('textarea')
+	ta.value = t.note
+	View.textarea_resize(ta)
+	return
+      }
+    })
+  }
+
   var initialize = function() {
     App.api('/data').get().success(function(data) {
 
-      console.log(data)
-      App.data = data;      
+      App.data = data;
 
-      var idx = data.hashes.indexOf(App.hash)
-      idx = (idx + data.weeks[data.current_week].seed) % data.teams.length
+      if (App.data.locked)
+	return show_rankings()
 
-      App.data.current_team = data.teams[idx]
-
-      View.render({
-	id: '/notes.html',
-	data: App.data
-      })
-
-      App.data.power_rankings[App.data.current_week].forEach(function(t) {
-	if (t.note && t.id === App.data.current_team.id) {
-	  var ta = document.querySelector('textarea')
-	  ta.value = t.note
-	  View.textarea_resize(ta)
-	  return
-	}
-      })
+      show_assignment()
 
     }).error(function(res) {
       console.log(res)
