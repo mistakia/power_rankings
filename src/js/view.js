@@ -37,6 +37,19 @@
       if (opts.id) html = this.tmpl(opts.id);
       if (opts.data) html = doT.template(html)(opts.data);
       this.main.innerHTML = html;      
+    },
+    show_rankings: function() {
+      App.data.tiers = [[], [], [], [], [], []];
+
+      App.data.power_rankings[App.data.current_week].forEach(function(t, i) {
+	t.rank = i + 1
+	App.data.tiers[t.tier - 1].push(t);
+      })
+
+      this.render({
+	id: '/rankings.html',
+	data: App.data
+      })
     }
   }
 });

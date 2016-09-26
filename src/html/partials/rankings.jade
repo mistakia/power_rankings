@@ -1,9 +1,11 @@
 .header
     h1 Week {{= it.current_week }} Power Rankings
 
-{{~ it.power_rankings[it.current_week] :team:index}}
+{{~ it.tiers :tier:i }}
+h4.tier Tier {{= i + 1 }}
+{{~ tier :team:index }}
 .team
-    h2 {{= index + 1}}. {{= team.name }}
+    h2 {{= team.rank}}. {{= team.name }}
     .meta
         strong Power Rank:
         span {{= (team.power_ranking).toFixed(2) }}
@@ -14,5 +16,6 @@
         strong Projected Points:
         span {{= team.total_points + team.projected_points }}
     .meta
-        p {{= (team.note || "").replace(/\n/g, '<br/>') }}
+        p {{= (team.note || '').replace(/\n/g, '<br/>') }}
+{{~}}
 {{~}}
