@@ -7,9 +7,11 @@ var league = require('../')
 var file = './data.json'
 var pff = require('../../pff/compare')
 var kmeans = require('node-kmeans')
+var moment = require('moment')
+var argv = require('yargs').argv;
 
 var data = jsonfile.readFileSync(file)
-var current_week = utils.getWeek()
+var current_week = argv.week || utils.getWeek()
 
 var server = function(cb) {
   request({
@@ -139,16 +141,19 @@ async.parallel({
       console.log(t.power_ranking + ' - ' + t.name)
     })
 
-    results.server.power_rankings[current_week].forEach(function(t) {
-      if (t.note) {
-	data.power_rankings[current_week].forEach(function(s) {
-	  if (s.id === t.id)
-	    return s.note = t.note
-	})
-      }
-    });
+    if (!_.isUndefined(results.server.power_rankings[current_week])) {
+      results.server.power_rankings[current_week].forEach(function(t) {
+	if (t.note) {
+	  data.power_rankings[current_week].forEach(function(s) {
+	    if (s.id === t.id)
+	      return s.note = t.note
+	  })
+	}
+      });
+    }
 
     data.hashes = results.server.hashes
+    data.updated = moment().format('dddd, MMMM Do YYYY, h:mm:ss a')
 
     jsonfile.writeFileSync(file, data, {spaces: 4})
   });

@@ -18,6 +18,7 @@
     "moment": "^2.15.1"
   },
   "devDependencies": {
+    "grunt": "^1.0.1",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
@@ -31,6 +32,7 @@
     "grunt-inline": "^0.3.6",
     "grunt-inline-angular-templates": "^0.1.5",
     "grunt-static-inline": "^0.1.9",
-    "node-kmeans": "^1.1.0"
+    "node-kmeans": "^1.1.0",
+    "yargs": "^5.0.0"
   }
 }
