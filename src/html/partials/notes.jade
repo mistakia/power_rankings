@@ -11,19 +11,24 @@
 
 .menu
     a.about.active(onclick='View.active("about")') About
+    a.ranking(onclick='View.active("ranking")') Rankings
     a.roster(onclick='View.active("roster")') Roster
     a.schedule(onclick='View.active("schedule")') Schedule
 
-.menu-body.about.active
+.menu-body.ranking
     {{ for(var week in it.power_rankings) { }}
     {{~ it.power_rankings[week] :team:index}}
     {{? team.id === it.current_team.id}}
     .meta
         strong Week {{= week }} Rank:
         span {{= index+1 }}
+        {{? team.note && week != it.current_week}}
+        p {{= (team.note || '').replace(/\n/g, '<br/>') }}
+        {{?}}
     {{?}}
     {{~}}
     {{ } }}
+.menu-body.about.active
     .meta
         strong Record:
         span {{= it.current_team.record.display }}
