@@ -1,7 +1,7 @@
 var moment = require('moment')
 
 var should_lock = function() {
-  var now = moment()
+  var now = moment().utc().utcOffset(-4)
   var day = now.day()
 
   if (day < 2)
@@ -10,8 +10,9 @@ var should_lock = function() {
   if (day > 4)
     return true
 
-  if (day === 4 && now.hour() >= 18)
+  if (day === 4 && now.hour() >= 20) {
     return true
+  }
 
   return false
 }
