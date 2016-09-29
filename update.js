@@ -101,6 +101,7 @@ async.parallel({
   rankings = _.map(rankings, function(r) {
     var o = _.pick(r, ['id', 'name', 'power_ranking', 'oberon', 'total_points'])
     o.projected = _.get(r, 'record.projected_display')
+    o.record = _.get(r, 'record.display')
     o.projected_points = _.get(r, 'season.season_total')
     return o
   })
@@ -112,7 +113,6 @@ async.parallel({
     if (err) console.error(err);
 
     var tiers = _.orderBy(res, 'centroid[0]', 'desc')
-    console.log(JSON.stringify(tiers, null, 2))
 
     tiers.forEach(function(tier, i) {
       tier.clusterInd.forEach(function(c) {

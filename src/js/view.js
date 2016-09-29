@@ -42,7 +42,13 @@
       App.data.tiers = [[], [], [], [], [], []];
 
       App.data.power_rankings[App.data.current_week].forEach(function(t, i) {
+	var last_pw = App.data.power_rankings[App.data.current_week - 1]
+	var previous_rank = last_pw.findIndex(function(item) {
+	  return item.id === t.id;
+	})
+	previous_rank++
 	t.rank = i + 1
+	t.change = previous_rank - t.rank
 	App.data.tiers[t.tier - 1].push(t);
       })
 

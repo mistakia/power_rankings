@@ -5,7 +5,18 @@
 h4.tier Tier {{= i + 1 }}
 {{~ tier :team:index }}
 .team
-    h2 {{= team.rank}}. {{= team.name }}
+    h2 \#{{= team.rank}}  {{= team.name }}
+        {{? team.change >= 0 }}
+        span.positive +{{= team.change}}
+        {{??}}
+        span.negative {{= team.change}}
+        {{?}}
+    .meta
+        strong Record:
+        span {{= team.record }}
+    .meta
+        strong Points Scored:
+        span {{= team.total_points }}
     .meta
         strong Power Rank:
         span {{= (team.power_ranking).toFixed(2) }}
