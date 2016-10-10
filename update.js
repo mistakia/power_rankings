@@ -13,6 +13,25 @@ var argv = require('yargs').argv;
 var data = jsonfile.readFileSync(file)
 var current_week = argv.week || utils.getWeek()
 
+function ordinal(number) {
+  switch (number) {
+    case 1:
+    case 21:
+      return number + 'st';
+      break;
+    case 2:
+    case 22:
+      return number + 'nd';
+      break;
+    case 3:
+    case 23:
+      return number + 'rd';
+      break;
+    default:
+      return number + 'th';
+  }
+}
+
 var server = function(cb) {
   request({
     url: 'http://52.9.51.222:8081/data',
@@ -41,7 +60,7 @@ async.parallel({
     team.oberon += (team.win_pct * 400)
     team.oberon = team.oberon / 10
 
-    team.season = pff.calculate(team.players, results.pff);
+    team.season = pff.calculate(team.players, results.pff, { auto_fill: true });
 
   })
 
@@ -106,9 +125,10 @@ async.parallel({
     return o
   })
   var vectors = []
-  for (var i = 0 ; i < rankings.length ; i++) {
-    vectors[i] = [ rankings[i]['power_ranking'] ]
-  }
+  rankings.forEach(function(t, i) {
+    vectors[i] = [ t['power_ranking'] ]
+  })
+
   kmeans.clusterize(vectors, {k: 6}, function(err, res) {
     if (err) console.error(err);
 
@@ -120,26 +140,37 @@ async.parallel({
       });
     });
 
-    data.power_rankings[current_week] = rankings
-
     var pff_rankings = _.orderBy(results.teams, 'pff_normalized', 'desc')
 
     console.log('\n============ PFF Rankings  ============')
-    pff_rankings.forEach(function(t) {
+    pff_rankings.forEach(function(t, i) {
       console.log(t.pff_normalized + ' - ' + t.name)
+      rankings.forEach(function(r) {
+	if (r.id == t.id) {
+	  r.pff = t.pff_normalized
+	  r.pff_rank = ordinal(i+1)
+	}
+      })
     })
 
     var ob_rankings = _.orderBy(results.teams, 'ob_normalized', 'desc')
 
     console.log('\n============ Oberon Rankings  ============')
-    ob_rankings.forEach(function(t) {
+    ob_rankings.forEach(function(t, i) {
       console.log(t.ob_normalized + ' - ' + t.name)
+
+      rankings.forEach(function(r) {
+	if (r.id == t.id)
+	  r.oberon_rank = ordinal(i+1)
+      })
     })
 
     console.log('\n============ Overall Rankings  ============')
     rankings.forEach(function(t) {
       console.log(t.power_ranking + ' - ' + t.name)
     })
+
+    data.power_rankings[current_week] = rankings
 
     if (!_.isUndefined(results.server.power_rankings[current_week])) {
       results.server.power_rankings[current_week].forEach(function(t) {

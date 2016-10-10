@@ -1,5 +1,6 @@
 var request = require('request')
 var jsonfile = require('jsonfile')
+var utils = require('./utils')
 var _ = require('lodash')
 
 var file = './data.json'
