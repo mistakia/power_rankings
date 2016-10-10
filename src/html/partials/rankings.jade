@@ -24,8 +24,14 @@ h4.tier Tier {{= i + 1 }}
         strong Projected Record:
         span {{= team.projected }}
     .meta
-        strong Projected Points:
+        strong Projected Points Total:
         span {{= team.total_points + team.projected_points }}
+    .meta
+        strong PFF:
+        span {{= (team.pff).toFixed(2) }} ({{= team.pff_rank }})
+    .meta
+        strong Oberon:
+        span {{= team.oberon}} ({{= team.oberon_rank }})
     .meta
         p {{= (team.note || '').replace(/\n/g, '<br/>') }}
 {{~}}
