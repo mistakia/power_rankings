@@ -18,7 +18,7 @@ var should_lock = function() {
 }
 
 var getWeek = function() {
-  var now = moment()
+  var now = moment().utc().utcOffset(-4)
 
   if (now.isBetween('2016-09-20', '2016-09-26', 'day', '[]'))
     return 3
