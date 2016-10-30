@@ -7,6 +7,7 @@ var jsonfile = require('jsonfile')
 var crypto = require('crypto')
 var _ = require('lodash')
 var utils = require('./utils')
+var moment = require('moment')
 
 var data = jsonfile.readFileSync(config.data_file)
 
@@ -52,6 +53,7 @@ var sendData = function(req, res) {
   var d = _.cloneDeep(data)
   d.current_week = utils.getWeek()
   d.locked = utils.should_lock()
+  d.date = moment().utc().utcOffset(-4)
   res.send(d)
 }
 
