@@ -4,9 +4,6 @@ var should_lock = function() {
   var now = moment().utc().utcOffset(-4)
   var day = now.day()
 
-  if (day < 1)
-    return true
-
   if (day > 4)
     return true
 
