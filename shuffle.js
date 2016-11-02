@@ -19,6 +19,7 @@ server(function(err, data) {
   if (err)
     return console.log(err)
 
-  data.hashes = _.shuffle(data.hashes)
+  var shifted = data.hashes.shift()
+  data.hashes.push(shifted)
   jsonfile.writeFileSync(file, data, {spaces: 4})
 })

@@ -73,7 +73,7 @@ async.parallel({
   data.teams.forEach(function(team) {
     team.ob_normalized = (team.oberon - ob_min) / (ob_max - ob_min)
     team.pff_normalized = (team.season.season_total - pff_min) / (pff_max - pff_min)
-    team.power_ranking = team.ob_normalized + (1.45 * team.pff_normalized)
+    team.power_ranking = team.ob_normalized + (1.15 * team.pff_normalized)
 
     team.schedule.forEach(function(m, i) {
       var op = _.find(data.teams, ['id', parseInt(m.opponent, 10)])

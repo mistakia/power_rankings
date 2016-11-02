@@ -232,7 +232,7 @@ module.exports = function(grunt) {
     'concat:production',
     'jade:index',
 
-    'uglify',
+    //'uglify',
     'after'
   ]);
 
